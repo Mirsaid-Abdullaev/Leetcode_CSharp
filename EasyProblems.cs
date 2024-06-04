@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -170,6 +171,60 @@ namespace Leetcode
             {
                 return total;
             }
+        }
+        /// <summary>
+        /// LeetCode problem #9
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static bool IsPalindrome(int x)
+        {
+            if (x < 10 && x > -1)
+            {
+                return true;
+            }
+            if (x % 10 == 0 || x < 0)
+            {
+                return false;
+            }
+            int tempx = x;
+            int reversed = 0;
+            int pow = (int)Math.Floor(Math.Log10(x));
+            for (int i = 0; i <= pow; i++)
+            {
+                reversed += (tempx % 10) * (int)Math.Pow(10, pow - i);
+                tempx /= 10;
+            }
+            return reversed == x;
+        }
+        /// <summary>
+        /// LeetCode problem #20
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsValid(string s)
+        {
+            Stack BracketStack = new Stack();
+            Dictionary<char, char> Brackets = new Dictionary<char, char>
+            {
+                { '{', '}' },
+                { '[', ']' },
+                { '(', ')' }
+            };
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (BracketStack.Count > 0)
+                {
+                    if (Brackets.ContainsKey((char)BracketStack.Peek()) && Brackets[(char)BracketStack.Peek()] == s[i])
+                    {
+                        BracketStack.Pop();
+                        continue;
+                    }
+                }
+                BracketStack.Push(s[i]);
+            }
+            return BracketStack.Count == 0;
         }
 
     }
