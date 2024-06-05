@@ -11,7 +11,6 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #344
         /// </summary>
-        /// <param name="s"></param>
         public static void ReverseString(char[] s)
         {
             int n = s.Length;
@@ -26,9 +25,6 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #1
         /// </summary>
-        /// <param name="nums"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public static int[] TwoSum(int[] nums, int target)
         {
             Dictionary<int, int> Map = new Dictionary<int, int>();
@@ -62,9 +58,6 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #2 solution
         /// </summary>
-        /// <param name="l1"></param>
-        /// <param name="l2"></param>
-        /// <returns></returns>
         public static ListNode AddTwoNumbers(ListNode l1, ListNode l2)
         {
             int carry = 0;
@@ -130,8 +123,6 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem # 409
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static int LongestPalindrome(string s)
         {
             Dictionary<char, int> Occurrences = new Dictionary<char, int>();
@@ -175,8 +166,6 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #9
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
         public static bool IsPalindrome(int x)
         {
             if (x < 10 && x > -1)
@@ -200,10 +189,13 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #20
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static bool IsValid(string s)
         {
+            if (s.Length == 0 || s.Length % 2 == 1)
+            {
+                return false;
+            }
+
             Stack BracketStack = new Stack();
             Dictionary<char, char> Brackets = new Dictionary<char, char>
             {
@@ -214,18 +206,136 @@ namespace Leetcode
 
             for (int i = 0; i < s.Length; i++)
             {
-                if (BracketStack.Count > 0)
+                if (BracketStack.Count > 0 && Brackets.ContainsKey((char)BracketStack.Peek()) && Brackets[(char)BracketStack.Peek()] == s[i])
                 {
-                    if (Brackets.ContainsKey((char)BracketStack.Peek()) && Brackets[(char)BracketStack.Peek()] == s[i])
-                    {
-                        BracketStack.Pop();
-                        continue;
-                    }
+                    BracketStack.Pop();
+                    continue;
                 }
                 BracketStack.Push(s[i]);
             }
             return BracketStack.Count == 0;
         }
+        /// <summary>
+        /// LeetCode problem #69
+        /// </summary>
+        public static int MySqrt(int x)
+        {
+            if (x <= 0)
+            {
+                return 0;
+            }
+            long l = 1;
+            long r = x;
+            long m = ((l + r) % 2 == 0) ? (l + r) / 2 : (l + r - 1) / 2;
 
+            while (!(m == l && m == r))
+            {
+                long temp = m * m - x; // m^2 - x
+
+                if (temp == 0)
+                {
+                    return (int)m;
+                }
+                else if (temp > 0)
+                {
+                    if (m != l)
+                    {
+                        r = m - 1;
+                    }
+                    else
+                    {
+                        r--;
+                    }
+                }
+                else
+                {
+                    if (-temp < (m + 1) * (m + 1) - x)
+                    {
+                        return (int)m;
+                    }
+                    if (m != r)
+                    {
+                        l = m + 1;
+                    }
+                    else
+                    {
+                        l++;
+                    }
+                }
+                m = ((l + r) % 2 == 0) ? (l + r) / 2 : (l + r - 1) / 2;
+            }
+            if (m * m > x)
+            {
+                return (int)(m - 1);
+            }
+            else
+            {
+                return (int)m;
+            }
+        }
+        /// <summary>
+        /// LeetCode problem #2423
+        /// </summary>
+        public static bool EqualFrequency(string word)
+        {
+            Dictionary<char, int> Occurrences = new Dictionary<char, int>();
+            Dictionary<int, int> SameOccurrences = new Dictionary<int, int>();
+            foreach(char letter in word)
+            {
+                if (Occurrences.ContainsKey(letter))
+                {
+                    Occurrences[letter]++;
+                }
+                else
+                {
+                    Occurrences.Add(letter, 1);
+                }
+            }
+
+            foreach (int val in Occurrences.Values)
+            {
+                if (SameOccurrences.ContainsKey(val))
+                {
+                    SameOccurrences[val]++;
+                }
+                else if (SameOccurrences.Keys.Count > 2)
+                {
+                    return false;
+                }
+                else
+                {
+                    SameOccurrences.Add(val, 1);
+                }
+            }
+
+            if (SameOccurrences.Count == 1 && (SameOccurrences.Keys.ElementAt(0) == 1 || SameOccurrences.Values.ElementAt(0) == 1)) //all chars in the string occur once, or one char occurs multiple times
+            {
+                return true;
+            }
+            else if (SameOccurrences.Count == 2) //there are two frequencies of letters
+            {
+                if (SameOccurrences.ContainsKey(1) && SameOccurrences[1] == 1 || 
+                    (SameOccurrences.Keys.ElementAt(0) == SameOccurrences.Keys.ElementAt(1) + 1 && SameOccurrences.Values.ElementAt(0) == 1) ||
+                    (SameOccurrences.Keys.ElementAt(1) == SameOccurrences.Keys.ElementAt(0) + 1 && SameOccurrences.Values.ElementAt(1) == 1))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else //there are more than two frequencies in the word, not possible to do this
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// LeetCode problem #2591
+        /// </summary>
+        public int DistMoney(int money, int children)
+        {
+
+        }
     }
 }
