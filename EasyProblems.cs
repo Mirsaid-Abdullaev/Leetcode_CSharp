@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Leetcode
 {
@@ -394,6 +393,49 @@ namespace Leetcode
                 //at this point, eights holds max number of eights that we can give out
                 return eights;
             }
+        }
+        //LeetCode problem #193 - bash regex: # Read from the file file.txt and output all valid phone numbers to stdout. Solution: egrep "^\([0-9]{3}\) [0-9]{3}\-[0-9]{4}$|^[0-9]{3}\-[0-9]{3}\-[0-9]{4}$" file.txt
+        ///<summary>
+        /// LeetCode problem #1909
+        ///</summary>
+        public static bool CanBeIncreasing(int[] nums)
+        {
+            int[] copy = new int[nums.Length - 1];
+            for (int i = 0; i < nums.Length; i++)
+            {
+                Array.Copy(nums, 0, copy, 0, i);
+                Array.Copy(nums, i + 1, copy, i, nums.Length - i - 1);
+                if (IsSortedAsc(copy))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Helper function for problem #1909
+        /// </summary>
+        public static bool IsSortedAsc(int[] arr)
+        {
+            int left = 0;
+            int right = arr.Length - 1;
+            while (left <= right)
+            {
+                if (arr[left] >= arr[right] && left != right)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (left != 0 && right != arr.Length - 1 && (arr[left] <= arr[left - 1] || arr[right] >= arr[right + 1]))
+                    {
+                        return false;
+                    }
+                }
+                left++;
+                right--;
+            }
+            return true;
         }
     }
 }
