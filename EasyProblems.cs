@@ -333,9 +333,67 @@ namespace Leetcode
         /// <summary>
         /// LeetCode problem #2591
         /// </summary>
-        public int DistMoney(int money, int children)
+        public static int DistMoney(int money, int children)
         {
+            if (children <= 0 || children > money)
+            {
+                return -1;
+            }
+            if (children == 1)
+            {
+                if (money != 8)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            //children > 1 at this point
+            int eights = money / 8;
+            int rem = money % 8;
 
+            if (eights == children) //number of lots of eight are the same as the children, with some remainder (< 8) that can be added to some other child, so no one has 4 moneys
+            {
+                if (rem > 0)
+                {
+                    return eights - 1;
+                }
+                else
+                {
+                    return eights;
+                }
+            }
+            else if (eights > children) //more lots of eight than children - e.g. 20 moneys, 2 children
+            {
+                return children - 1;
+            }
+            else //less lots of eight than children, e.g. 20 moneys, but 3 kids
+            {
+                if (rem == 0)
+                {
+                    eights--;
+                    rem = 8;
+                }
+                int rem_child = children - eights;
+                while (rem < rem_child)
+                {
+                    rem += 8;
+                    eights--;
+                    rem_child++;
+                }
+                if (rem == 4 && rem_child == 1)
+                {
+                    return eights - 1;
+                }
+                if (rem_child > rem)
+                {
+                    return 0;
+                }
+                //at this point, eights holds max number of eights that we can give out
+                return eights;
+            }
         }
     }
 }
