@@ -7,7 +7,6 @@ namespace Leetcode
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(IsValid("{([{([])}])}"));
             Console.ReadLine();
         }
     }
