@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Leetcode
 {
@@ -437,5 +440,183 @@ namespace Leetcode
             }
             return true;
         }
+        /// <summary>
+        /// Leetcode problem #1380
+        /// </summary>
+        public static IList<int> LuckyNumbers(int[][] matrix)
+        {
+            ConcurrentBag<int> lucky_nums = new ConcurrentBag<int>();
+            //List<int> lucky_nums = new List<int>();
+            int rows = matrix.Length;
+            int cols = matrix[0].Length;
+
+            Parallel.For(0, rows, i => 
+            {
+                //find lowest int in a row and its column index
+                int candidate = matrix[i][0]; //row minimum
+                int col = 0;
+                for (int j = 1; j < cols; j++)
+                {
+                    if (matrix[i][j] < candidate)
+                    {
+                        candidate = matrix[i][j];
+                        col = j;
+                    }
+                }
+
+                bool flag = true;
+                for (int j = 0; j < rows; j++)
+                {
+                    if (matrix[j][col] > candidate) //there is a larger value in the matrix column, so this row doesnt have a lucky number
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) //means the row minimum is the column minimum as well
+                {
+                    lucky_nums.Add(candidate);
+                }
+            }); //rows
+     
+            return lucky_nums.ToList();
+        }
+        /// <summary>
+        /// Leetcode problem #605
+        /// </summary>
+        public static bool CanPlaceFlowers(int[] flowerbed, int n)
+        {
+            if (n == 0)
+            {
+                return true;
+            }
+            int length = flowerbed.Length - 1;
+            if (n > length + 1)
+            {
+                return false;
+            }
+            int x = n;
+            if (length > 0) //more than 1 element
+            {
+                if (flowerbed[0] == 0 && flowerbed[1] == 0)
+                {
+                    flowerbed[0] = 1;
+                    x--;
+                }
+                if (flowerbed[^2] == 0 && flowerbed[^1] == 0)
+                {
+                    flowerbed[^1] = 1;
+                    x--;
+                }
+                if (x <= 0)
+                {
+                    return true;
+                }
+                for (int i = 1; i < length; i++)
+                {
+                    if ((flowerbed[i - 1] | flowerbed[i + 1]) == 0 && flowerbed[i] == 0) // ...0, [current], 0...
+                    {
+                        flowerbed[i] = 1;
+                        x--;
+                    }
+                    if (x == 0)
+                    {
+                        return true;
+                    }
+                }
+                return x <= 0;
+            }
+            else //one element and n == 1 (due to check for n > length previously)
+            {
+                return flowerbed[0] == 0;
+            }
+        }
+        /// <summary>
+        /// Leetcode problem #2047
+        /// </summary>
+        public static int CountValidWords(string sentence)
+        {
+            Regex regex = new Regex(@"^([a-z]*|[a-z]+(-)?[a-z]+)(\.|\?|\!|\,)?$");
+            int len = sentence.Length;
+            int valid_words = 0;
+            string word = "";
+            for (int i = 0; i < len; i++)
+            {
+                if (sentence[i] == ' ')
+                {
+                    if (word.Length > 0 && regex.IsMatch(word))
+                    {
+                        valid_words++;
+                    }
+                    word = "";
+                    continue;
+                }
+                word += sentence[i];
+            }
+            if (word.Length > 0 && regex.IsMatch(word))
+            {
+                valid_words++;
+            } //checking the final word (if it exists)
+            return valid_words;
+        }
+        /// <summary>
+        /// Leetcode problem #2760
+        /// </summary>
+        public static int LongestAlternatingSubarray(int[] nums, int threshold)
+        {
+            int length = nums.Length;
+            int min_val = nums.Min();
+            if (min_val > threshold)
+            {
+                return 0;
+            }
+
+            if (length == 1)
+            {
+                if (nums[0] % 2 == 0 && nums[0] <= threshold)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                };
+            }
+
+            int l = 0;
+            int max = 0;
+
+restart:    while (l < length && (nums[l] > threshold || nums[l] % 2 == 1))
+            {
+                l++;
+            }
+
+            //valid "l" set, now start sliding window, i plays the "r" variable role
+
+            for (int r = l; r < length; r++)
+            {
+                if (max == 0)
+                {
+                    max = 1;
+                }
+                if (r > l && (nums[r] > threshold || nums[r] % 2 == nums[r - 1] % 2)) //int at "i" was not valid
+                {
+                    l = r; //new "l" = r
+                    goto restart;
+                }
+                if ((r - l + 1) > max)
+                {
+                    max = r - l + 1;
+                }
+            }
+
+            if (max == 0 && ((l < length && nums[l] <= threshold && nums[l] % 2 == 0) || (nums[l - 1] <= threshold && nums[l - 1] % 2 == 0)))
+            {
+                max = 1;
+            }
+
+            return max;
+        }
+
     }
 }
